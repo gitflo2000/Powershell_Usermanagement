@@ -1,9 +1,12 @@
-﻿param ([string]$dateiname)
+param ([string]$dateiname)
 Write-Host "Input Datei: $dateiname"
 
-$delimiter = ","
+$delimiter = ";"
+#Zulässige Werte: ";",","
 $encoding = "UTF8"
 #Zulässige Werte: ASCII, BigEndianUnicode, BigEndianUTF32, OEM, Unicode, UTF7, UTF8, UTF8BOM, UTF8NoBOM, UTF32
+$useQuotes = "Never"
+#This parameter was added in PowerShell 7.0. Zulässige Werte: Never, Always, AsNeeded
 $dateiname_ohne_csv = $dateiname.Substring(0, $dateiname.Length - 4)
 $ausgabe_AD = $dateiname_ohne_csv+"_AD.csv"
 $ausgabe_Moodle = $dateiname_ohne_csv+"_Moodle.csv"
@@ -13,7 +16,7 @@ Write-Host "ausgabe_Moodle: " $ausgabe_Moodle
 
 function ConvertText{
 	param ([string]$Text)
-	$Text = $Text -replace 'ä','ae' -replace 'ö','oe' -replace 'ü','ue' -replace 'ß','ss' -replace 'Ä','Ae' -replace 'Ö','Oe' -replace 'Ü','Ue'
+	$Text = $Text -replace 'ä','ae' -replace 'ö','oe' -replace 'ü','ue' -replace 'ß','ss' -replace 'Ä','Ae' -replace 'Ö','Oe' -replace 'Ü','Ue' -replace 'ć','c' -replace 'ǎ','a' -replace 'ễ','e' -replace 'ğ','g'
 	return $Text
 }
 
@@ -56,6 +59,7 @@ $ergebnis_AD | Export-Csv `
 	-Path $ausgabe_AD `
 	-Delimiter $delimiter `
 	-NoTypeInformation `
+	-UseQuotes $useQuotes `
 	-Encoding $encoding
 
 $ergebnis_AD | ConvertTo-Csv -NoTypeInformation -Delimiter $delimiter
@@ -64,6 +68,7 @@ $ergebnis_Moodle | Export-Csv `
 	-Path $ausgabe_Moodle `
 	-Delimiter $delimiter `
 	-NoTypeInformation `
+	-UseQuotes $useQuotes `
 	-Encoding $encoding
 
 $ergebnis_Moodle | ConvertTo-Csv -NoTypeInformation -Delimiter $delimiter
