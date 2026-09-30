@@ -26,8 +26,13 @@ $ergebnis_AD = foreach ($zeile in $daten) {
 	$vorname = ConvertText $zeile.Vorname
 	$nachname = ConvertText $zeile.Nachname
 
+	#Daten aus Divis
+	#$myKlassenname = $zeile.Klassenname
+	#Daten aus Schuldock
+	$myKlassenname = $zeile.{Klassen (aktiv)}
+
 	[PSCustomObject]@{
-		S_K = $zeile.Klassenname
+		S_K = $myKlassenname
 		Name = $nachname
 		Vorname = $vorname
 		Geburtsdat = $zeile.Geburtsdatum
@@ -48,7 +53,7 @@ $ergebnis_Moodle = foreach ($zeile in $daten) {
 		email = "$username@bs19hh.de"
 		password = $zeile.Geburtsdatum
 		cohort1 = "5916_bs19"
-		cohort2 = "5916_bs_" + $zeile.Klassenname
+		cohort2 = "5916_bs_" + $myKlassenname
 		profile_field_schoolno = "5916"
 		profile_field_schoolname = "Berufliche Schule Farmsen BS19"
 		profile_field_schoolpersona = "Schüler/in"
