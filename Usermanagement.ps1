@@ -7,6 +7,7 @@ $encoding = "UTF8"
 #Zulässige Werte: ASCII, BigEndianUnicode, BigEndianUTF32, OEM, Unicode, UTF7, UTF8, UTF8BOM, UTF8NoBOM, UTF32
 $useQuotes = "Never"
 #This parameter was added in PowerShell 7.0. Zulässige Werte: Never, Always, AsNeeded
+$quelleIsSchuldock = $true
 $dateiname_ohne_csv = $dateiname.Substring(0, $dateiname.Length - 4)
 $ausgabe_AD = $dateiname_ohne_csv+"_AD.csv"
 $ausgabe_Moodle = $dateiname_ohne_csv+"_Moodle.csv"
@@ -25,11 +26,12 @@ $daten = Import-Csv -Path $dateiname -Delimiter $delimiter -Encoding $encoding
 $ergebnis_AD = foreach ($zeile in $daten) {
 	$vorname = ConvertText $zeile.Vorname
 	$nachname = ConvertText $zeile.Nachname
-
-	#Daten aus Divis
-	#$myKlassenname = $zeile.Klassenname
-	#Daten aus Schuldock
-	$myKlassenname = $zeile.{Klassen (aktiv)}
+	If ($quelleIsSchuldock) {
+		$myKlassenname = $zeile.{Klassen (aktiv)}
+	}
+	Else {
+		$myKlassenname = $zeile.Klassenname
+	}
 
 	[PSCustomObject]@{
 		S_K = $myKlassenname
@@ -42,7 +44,12 @@ $ergebnis_AD = foreach ($zeile in $daten) {
 $ergebnis_Moodle = foreach ($zeile in $daten) {
 	$vorname = ConvertText $zeile.Vorname
 	$nachname = ConvertText $zeile.Nachname
-	
+	If ($quelleIsSchuldock) {
+		$myKlassenname = $zeile.{Klassen (aktiv)}
+	}
+	Else {
+		$myKlassenname = $zeile.Klassenname
+	}
 	#Benutzername: erste 6 Zeichen des Nachnamens + erste 3 Zeichen des Vornamens
 	$username = ($nachname.Substring(0, [Math]::Min(6, $nachname.Length)) + $vorname.Substring(0, [Math]::Min(3, $vorname.Length))).ToLower()
 
